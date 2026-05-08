@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+  <title>Birthday Surprise</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="home">
+  <canvas id="fx" aria-hidden="true"></canvas>
+
+  <header class="topbar">
+    <a class="brand" href="index.html" aria-label="Home">🎁 Birthday Special</a>
+  </header>
+
+  <main class="page">
+    <section class="screen" aria-label="Countdown screen">
+      <div class="heroCard heroCenter" id="countdownCard">
+        <p class="eyebrow">A little countdown…</p>
+        <h1 class="heroTitle">One birthday surprise, made for you</h1>
+        <p class="sub">When the timer ends, your gift unlocks.</p>
+
+        <div class="timer" id="timer" role="timer" aria-live="polite" aria-label="Countdown timer">
+          <div class="tUnit"><div class="tNum" id="tDays">00</div><div class="tLbl">Days</div></div>
+          <div class="tSep" aria-hidden="true">:</div>
+          <div class="tUnit"><div class="tNum" id="tHours">00</div><div class="tLbl">Hours</div></div>
+          <div class="tSep" aria-hidden="true">:</div>
+          <div class="tUnit"><div class="tNum" id="tMins">00</div><div class="tLbl">Mins</div></div>
+          <div class="tSep" aria-hidden="true">:</div>
+          <div class="tUnit"><div class="tNum" id="tSecs">00</div><div class="tLbl">Secs</div></div>
+        </div>
+
+        <div class="row" id="timerHint">
+          <button class="btn" id="toggleEffectsBtn" type="button" aria-pressed="true">Effects: On</button>
+        </div>
+      </div>
+
+      <div class="heroCard heroCenter hidden" id="promptCard" aria-label="Surprise prompt">
+        <div class="mascotFloat" aria-hidden="true">
+          <img class="mascotWave" src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExdHo3b3J6anlwbGtjbTBrMmJraWFkMHJmcjdzeGs5MWV2YTI2bzA0ciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/ZsbOzGsYjD5tjPCLul/giphy.gif" alt="" loading="eager" decoding="async" />
+        </div>
+        <h2 class="promptTitle">Do you want to see your surprise gift?</h2>
+        <div class="row">
+          <button class="btn primary" id="yesBtn" type="button">Yes please</button>
+          <button class="btn" id="noBtn" type="button">No thanks</button>
+        </div>
+
+        <div class="noThanksOverlay hidden" id="noThanksOverlay" aria-hidden="true">
+          <img
+            class="noThanksGif"
+            src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExcmgwNHJnbGRkZXY4bXc2eW01cjBhN2ZkOGg1emJxYWl0dThibHd2ZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/qfWlRVqYWMzQ3NgZgg/giphy.gif"
+            alt=""
+            loading="eager"
+            decoding="async"
+          />
+        </div>
+        <p class="small" id="noMsg" aria-live="polite"></p>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

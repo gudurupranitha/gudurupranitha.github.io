@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+  <title>Your Gift</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="hub">
+  <canvas id="fx" aria-hidden="true"></canvas>
+
+  <header class="topbar">
+    <a class="brand" href="index.html" aria-label="Home">🎁 Birthday Special</a>
+  </header>
+
+  <main class="page">
+    <section class="screen" aria-label="Gift hub">
+      <div class="heroCard heroCenter">
+        <p class="eyebrow">Made just for you</p>
+        <h1 class="heroTitle">Pick one</h1>
+        <p class="sub">Four little surprises — tap an icon to open.</p>
+      </div>
+
+      <div class="iconGrid" aria-label="Surprise options">
+        <a class="iconCard" href="gallery.html" aria-label="Open camera gallery">
+          <img class="iconImg" alt="Camera" data-icon="camera" />
+          <div class="iconLabel">Camera</div>
+        </a>
+        <a class="iconCard" href="letter.html" aria-label="Open love letter">
+          <img class="iconImg" alt="Letter" data-icon="letter" />
+          <div class="iconLabel">Letter</div>
+        </a>
+        <a class="iconCard" href="unlock.html" aria-label="Open love coupons">
+          <img class="iconImg" alt="Love coupons" data-icon="coupon" />
+          <div class="iconLabel">Love Coupons</div>
+        </a>
+        <a class="iconCard" href="bouquet.html" aria-label="Open bouquet">
+          <img class="iconImg" alt="Bouquet" data-icon="bouquet" />
+          <div class="iconLabel">Bouquet</div>
+        </a>
+      </div>
+
+      <footer class="footer">
+        <p>Made with ❤️ (no external libraries).</p>
+      </footer>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

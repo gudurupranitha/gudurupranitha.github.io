@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+  <title>Gallery</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="gallery">
+  <canvas id="fx" aria-hidden="true"></canvas>
+
+  <header class="topbar">
+    <a class="brand" href="hub.html" aria-label="Back to gift hub">← Back</a>
+  </header>
+
+  <main class="page">
+    <section class="screen" aria-label="Photo gallery">
+      <div class="heroCard heroCenter">
+        <p class="eyebrow">Camera</p>
+        <h1 class="heroTitle">Our little gallery</h1>
+        <p class="sub">A few moments I never want to forget.</p>
+      </div>
+
+      <div class="galleryGrid" id="galleryGrid" aria-label="Photos"></div>
+
+      <div class="bottomBar">
+        <a class="btn" href="hub.html">Back</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

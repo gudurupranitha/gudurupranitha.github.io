@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+  <title>Unlock Coupons</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="unlock">
+  <canvas id="fx" aria-hidden="true"></canvas>
+
+  <header class="topbar">
+    <a class="brand" href="hub.html" aria-label="Back to gift hub">← Back</a>
+  </header>
+
+  <main class="page">
+    <section class="screen" aria-label="Unlock coupons">
+      <div class="heroCard heroCenter">
+        <p class="eyebrow">Love Coupons</p>
+        <h1 class="heroTitle">One last step…</h1>
+        <p class="sub">Type the secret word to unlock your coupons.</p>
+      </div>
+
+      <div class="heroCard">
+        <label class="field">
+          <span class="fieldLbl">Secret word</span>
+          <input class="fieldInput" id="couponInput" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="Type here" />
+        </label>
+        <div class="row left">
+          <button class="btn primary" id="unlockBtn" type="button">Unlock</button>
+          <span class="small" id="unlockMsg" aria-live="polite"></span>
+        </div>
+      </div>
+
+      <div class="bottomBar">
+        <a class="btn" href="hub.html">Back</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

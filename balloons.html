@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+  <title>Pop the Balloons</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="balloons">
+  <canvas id="fx" aria-hidden="true"></canvas>
+
+  <header class="topbar">
+    <a class="brand" href="index.html" aria-label="Home">🎁 Birthday Special</a>
+  </header>
+
+  <main class="page">
+    <section class="screen" aria-label="Balloon game">
+      <div class="heroCard heroCenter">
+        <h1 class="heroTitle">Pop the balloons</h1>
+        <p class="sub">Tap each balloon to reveal a sweet message.</p>
+      </div>
+
+      <div class="balloonSky" id="balloonSky" aria-label="Floating balloons area"></div>
+
+      <div class="modal hidden" id="revealModal" role="dialog" aria-modal="true" aria-label="Balloon reveal">
+        <div class="modalCard">
+          <button class="modalClose btn" id="closeReveal" type="button" aria-label="Close">Close</button>
+          <div class="revealMedia" id="revealMedia"></div>
+          <h2 class="revealTitle" id="revealTitle"></h2>
+          <p class="revealText" id="revealText"></p>
+        </div>
+      </div>
+
+      <div class="bottomBar">
+        <button class="btn" id="nextBtn" type="button" disabled>Next</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
