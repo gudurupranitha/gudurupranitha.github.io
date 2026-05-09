@@ -17,15 +17,41 @@
   <main class="page">
     <section class="screen" aria-label="Coupons">
       <div class="heroCard heroCenter">
-        <p class="eyebrow">Unlocked</p>
-        <h1 class="heroTitle">Your love coupons</h1>
-        <p class="sub">Redeem any time you want.</p>
+        <p class="eyebrow">Love Coupons</p>
+        <h1 class="heroTitle">Tap to redeem!</h1>
+        <p class="sub">Each coupon can be redeemed once.</p>
+
+        <div class="row" style="margin-top:10px">
+          <button class="btn primary" id="addCouponBtn" type="button">+ Add</button>
+        </div>
       </div>
 
       <div class="couponList" id="couponList" aria-label="Coupon list"></div>
 
       <div class="bottomBar">
         <a class="btn" href="hub.html">Back</a>
+      </div>
+
+      <div class="modal hidden" id="couponModal" role="dialog" aria-modal="true" aria-label="Add coupon">
+        <div class="modalCard">
+          <button class="modalClose btn" id="closeCouponModal" type="button" aria-label="Close">Close</button>
+          <h2 class="revealTitle" style="margin-top:10px">Add a coupon</h2>
+
+          <label class="field" style="margin-top:10px">
+            <span class="fieldLbl">Title</span>
+            <input class="fieldInput" id="newCouponTitle" type="text" autocomplete="off" placeholder="Eg: Long Drive + Music Night" />
+          </label>
+
+          <label class="field" style="margin-top:12px">
+            <span class="fieldLbl">Subtitle</span>
+            <input class="fieldInput" id="newCouponSub" type="text" autocomplete="off" placeholder="Eg: Good for one big smile!" />
+          </label>
+
+          <div class="row left" style="margin-top:12px">
+            <button class="btn primary" id="submitCouponBtn" type="button">Submit</button>
+            <span class="small" id="couponModalMsg" aria-live="polite"></span>
+          </div>
+        </div>
       </div>
     </section>
   </main>

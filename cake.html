@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+  <title>Cake</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="cake">
+  <canvas id="fx" aria-hidden="true"></canvas>
+
+  <header class="topbar">
+    <a class="brand" href="hub.html" aria-label="Back to gift hub">← Back</a>
+  </header>
+
+  <main class="page">
+    <section class="screen" aria-label="Cake">
+      <div class="heroCard heroCenter">
+        <p class="eyebrow">Cake</p>
+        <h1 class="heroTitle">Make a wish ✨</h1>
+        <p class="sub">Tap each candle to blow it out.</p>
+      </div>
+
+      <div class="heroCard center" aria-label="Birthday cake with candles">
+        <div class="cakeScene">
+          <div class="cake" id="cakeWrap" aria-label="Cake">
+            <div class="cakeTop"></div>
+            <div class="candles" id="candlesWrap" aria-label="Candles">
+              <button class="candle" type="button" aria-label="Candle 1"></button>
+              <button class="candle" type="button" aria-label="Candle 2"></button>
+              <button class="candle" type="button" aria-label="Candle 3"></button>
+              <button class="candle" type="button" aria-label="Candle 4"></button>
+              <button class="candle" type="button" aria-label="Candle 5"></button>
+            </div>
+            <div class="cakeBody"></div>
+            <div class="plate" aria-hidden="true"></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <span class="small" id="candlesStatus" aria-live="polite"></span>
+        </div>
+
+        <p class="cakeLoveText" aria-label="Birthday message">Happy Birthday My Love</p>
+      </div>
+
+      <div class="bottomBar">
+        <a class="btn" href="hub.html">Back</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

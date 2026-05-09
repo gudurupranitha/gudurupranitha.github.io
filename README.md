@@ -15,6 +15,13 @@ Simple multi-page birthday website (HTML/CSS/JS) with page navigation:
 
 Open `index.html` in a browser.
 
+### Coupons (JSON persistence)
+
+Browsers can’t write to local `.json` files directly. To make the Love Coupons page support **Add / Delete / Redeem / Unredeem** and persist to `data/coupons.json`, run the local server:
+
+- `node server.cjs`
+- Open `http://localhost:5500/`
+
 Optional local server (recommended if clipboard is blocked when opened as a file):
 
 - Python: `python -m http.server 5500`
@@ -36,4 +43,4 @@ Pages:
 - `index.html` → timer + prompt
 - `balloons.html` → balloons (Next → `hub.html`)
 - `hub.html` → 4 icons
-- `gallery.html`, `letter.html`, `unlock.html`, `coupons.html`, `bouquet.html`
+- `gallery.html`, `letter.html`, `unlock.html`, `coupons.html`, `cake.html`

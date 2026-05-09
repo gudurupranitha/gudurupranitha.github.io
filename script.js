@@ -551,10 +551,15 @@ function iconSvg(kind) {
   }
   if (kind === "bouquet") {
     return base(
-      `<circle cx='32' cy='36' r='10' fill='url(#g)'/>
-       <circle cx='58' cy='34' r='10' fill='rgba(255,214,106,.85)'/>
-       <circle cx='46' cy='52' r='12' fill='rgba(170,255,120,.70)'/>
-       <path d='M30 58c10 16 28 20 36 0-6 24-10 30-18 30s-12-6-18-30z' fill='rgba(0,0,0,.18)'/>`
+      `<rect x='26' y='48' width='44' height='24' rx='10' fill='url(#g)'/>
+       <rect x='24' y='40' width='48' height='14' rx='10' fill='rgba(255,255,255,.16)'/>
+       <path d='M30 44c4 6 10 6 14 0 4 6 10 6 14 0 4 6 10 6 14 0' fill='none' stroke='rgba(255,255,255,.28)' stroke-width='4' stroke-linecap='round'/>
+       <rect x='34' y='30' width='4' height='12' rx='2' fill='rgba(255,255,255,.30)'/>
+       <rect x='46' y='28' width='4' height='14' rx='2' fill='rgba(255,255,255,.30)'/>
+       <rect x='58' y='30' width='4' height='12' rx='2' fill='rgba(255,255,255,.30)'/>
+       <path d='M36 28c2-4 6-4 6 0-2 2-4 4-6 0z' fill='rgba(255,214,106,.92)'/>
+       <path d='M48 26c2-4 6-4 6 0-2 2-4 4-6 0z' fill='rgba(255,214,106,.92)'/>
+       <path d='M60 28c2-4 6-4 6 0-2 2-4 4-6 0z' fill='rgba(255,214,106,.92)'/>`
     );
   }
   return base("<circle cx='48' cy='48' r='18' fill='url(#g)'/>");
@@ -632,41 +637,283 @@ function initCoupons() {
   }
   const list = $("#couponList");
   if (!list) return;
-  list.innerHTML = "";
-  SITE.coupons.forEach((c) => {
-    const card = document.createElement("div");
-    card.className = "ticket";
-    const t = document.createElement("div");
-    t.className = "ticketTitle";
-    t.textContent = c.title;
-    const s = document.createElement("p");
-    s.className = "ticketSub";
-    s.textContent = c.sub;
-    card.appendChild(t);
-    card.appendChild(s);
-    list.appendChild(card);
+
+  const addBtn = $("#addCouponBtn");
+  const modal = $("#couponModal");
+  const closeModalBtn = $("#closeCouponModal");
+  const submitBtn = $("#submitCouponBtn");
+  const titleInput = $("#newCouponTitle");
+  const subInput = $("#newCouponSub");
+  const modalMsg = $("#couponModalMsg");
+
+  const API_BASE = "/api/coupons";
+
+  function setModalOpen(open) {
+    if (!modal) return;
+    modal.classList.toggle("hidden", !open);
+    if (open) {
+      requestAnimationFrame(() => titleInput?.focus());
+    }
+  }
+
+  addBtn?.addEventListener("click", () => {
+    if (modalMsg) modalMsg.textContent = "";
+    if (titleInput) titleInput.value = "";
+    if (subInput) subInput.value = "";
+    setModalOpen(true);
+  });
+
+  closeModalBtn?.addEventListener("click", () => setModalOpen(false));
+  modal?.addEventListener("click", (e) => {
+    if (e.target === modal) setModalOpen(false);
+  });
+
+  function iconSvgTrash() {
+    return `<svg viewBox='0 0 24 24' aria-hidden='true'>
+      <path d='M9 3h6l1 2h4v2H4V5h4l1-2zm1 7h2v9h-2v-9zm4 0h2v9h-2v-9zM7 10h2v9H7v-9z'/>
+    </svg>`;
+  }
+  function iconSvgX() {
+    return `<svg viewBox='0 0 24 24' aria-hidden='true'>
+      <path d='M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3 1.4 1.4z'/>
+    </svg>`;
+  }
+
+  let coupons = [];
+
+  async function apiGet() {
+    const res = await fetch(API_BASE, { headers: { accept: "application/json" } });
+    if (!res.ok) throw new Error("api_get_failed");
+    const data = await res.json();
+    return Array.isArray(data) ? data : [];
+  }
+
+  async function apiAdd(title, sub) {
+    const res = await fetch(API_BASE, {
+      method: "POST",
+      headers: { "content-type": "application/json", accept: "application/json" },
+      body: JSON.stringify({ title, sub }),
+    });
+    if (!res.ok) throw new Error("api_add_failed");
+    return await res.json();
+  }
+
+  async function apiPatch(id, redeemed) {
+    const res = await fetch(`${API_BASE}/${encodeURIComponent(id)}`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json", accept: "application/json" },
+      body: JSON.stringify({ redeemed }),
+    });
+    if (!res.ok) throw new Error("api_patch_failed");
+    return await res.json();
+  }
+
+  async function apiDelete(id) {
+    const res = await fetch(`${API_BASE}/${encodeURIComponent(id)}`, { method: "DELETE" });
+    if (!res.ok) throw new Error("api_delete_failed");
+  }
+
+  function render() {
+    list.innerHTML = "";
+
+    coupons.forEach((c) => {
+      const card = document.createElement("div");
+      card.className = "ticket";
+      card.dataset.redeemed = c.redeemed ? "1" : "0";
+
+      const glyph = document.createElement("div");
+      glyph.className = "ticketGlyph";
+      glyph.setAttribute("aria-hidden", "true");
+
+      const textWrap = document.createElement("div");
+      textWrap.className = "ticketText";
+
+      const t = document.createElement("div");
+      t.className = "ticketTitle";
+      t.textContent = c.title;
+
+      const s = document.createElement("p");
+      s.className = "ticketSub";
+      s.textContent = c.sub || "";
+
+      textWrap.appendChild(t);
+      textWrap.appendChild(s);
+
+      const actions = document.createElement("div");
+      actions.className = "ticketActions";
+
+      const redeemBtn = document.createElement("button");
+      redeemBtn.type = "button";
+      redeemBtn.className = "redeemBtn";
+      redeemBtn.textContent = c.redeemed ? "Redeemed" : "Redeem";
+      redeemBtn.disabled = !!c.redeemed;
+
+      const unredeemBtn = document.createElement("button");
+      unredeemBtn.type = "button";
+      unredeemBtn.className = "iconBtn unredeemBtn";
+      unredeemBtn.setAttribute("aria-label", "Unredeem");
+      unredeemBtn.innerHTML = iconSvgX();
+
+      const delBtn = document.createElement("button");
+      delBtn.type = "button";
+      delBtn.className = "iconBtn danger";
+      delBtn.setAttribute("aria-label", "Delete coupon");
+      delBtn.innerHTML = iconSvgTrash();
+
+      const stamp = document.createElement("div");
+      stamp.className = "redeemedStamp";
+      stamp.setAttribute("aria-hidden", "true");
+      stamp.textContent = "Redeemed";
+
+      const redeemLocal = async (on) => {
+        await apiPatch(c.id, on);
+        await refresh();
+
+        if (on) {
+          const r = card.getBoundingClientRect();
+          addConfettiBurst(r.left + r.width / 2, r.top + Math.min(40, r.height / 2), 80);
+        }
+      };
+
+      redeemBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (c.redeemed) return;
+        try {
+          await redeemLocal(true);
+        } catch {
+          // ignore
+        }
+      });
+
+      unredeemBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!c.redeemed) return;
+        try {
+          await redeemLocal(false);
+        } catch {
+          // ignore
+        }
+      });
+
+      delBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        try {
+          await apiDelete(c.id);
+          await refresh();
+        } catch {
+          // ignore
+        }
+      });
+
+      // Tap-to-redeem like the reference
+      card.addEventListener("click", async (e) => {
+        if (e.target && e.target.closest && e.target.closest("button")) return;
+        if (c.redeemed) return;
+        try {
+          await redeemLocal(true);
+        } catch {
+          // ignore
+        }
+      });
+
+      actions.appendChild(redeemBtn);
+      actions.appendChild(unredeemBtn);
+      actions.appendChild(delBtn);
+
+      card.appendChild(glyph);
+      card.appendChild(textWrap);
+      card.appendChild(actions);
+      card.appendChild(stamp);
+      list.appendChild(card);
+    });
+  }
+
+  async function refresh() {
+    coupons = await apiGet();
+    render();
+  }
+
+  async function submitNewCoupon() {
+    if (!titleInput || !modalMsg) return;
+    const title = String(titleInput.value || "").trim();
+    const sub = String(subInput?.value || "").trim();
+    if (!title) {
+      modalMsg.textContent = "Please enter a title.";
+      return;
+    }
+    modalMsg.textContent = "Saving…";
+    try {
+      await apiAdd(title, sub);
+      modalMsg.textContent = "Added ✨";
+      setModalOpen(false);
+      await refresh();
+    } catch {
+      modalMsg.textContent = "Start the server: node server.cjs";
+    }
+  }
+
+  submitBtn?.addEventListener("click", submitNewCoupon);
+  titleInput?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") submitNewCoupon();
+  });
+  subInput?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") submitNewCoupon();
+  });
+
+  // If opened as file://, fetch('/api/...') won't work.
+  if (location.protocol === "file:") {
+    list.innerHTML =
+      "<div class='card' style='text-align:center'>Run <b>node server.cjs</b> and open <b>http://localhost:5500/</b> to persist coupons in JSON.</div>";
+    return;
+  }
+
+  refresh().catch(() => {
+    list.innerHTML =
+      "<div class='card' style='text-align:center'>Start the server with <b>node server.cjs</b> to load/save coupons.json.</div>";
   });
 }
 
-// ---------- Bouquet ----------
-function initBouquet() {
-  const bubblesWrap = $("#bouquetBubbles");
-  const art = $("#bouquetArt");
-  if (!bubblesWrap || !art) return;
+// ---------- Cake ----------
+function initCake() {
+  const candlesWrap = $("#candlesWrap");
+  const candlesStatus = $("#candlesStatus");
+  const cakeWrap = $("#cakeWrap");
+  if (!candlesWrap || !candlesStatus || !cakeWrap) return;
 
-  bubblesWrap.innerHTML = "";
-  SITE.bouquet.bubbles.forEach((b) => {
-    const el = document.createElement("div");
-    el.className = "bubble";
-    el.textContent = b.text;
-    if (b.top) el.style.top = b.top;
-    if (b.bottom) el.style.bottom = b.bottom;
-    if (b.left) el.style.left = b.left;
-    if (b.right) el.style.right = b.right;
-    bubblesWrap.appendChild(el);
+  let fireworksOnce = false;
+
+  function update() {
+    const candles = $all(".candle", candlesWrap);
+    const out = candles.filter((c) => c.classList.contains("out")).length;
+    candlesStatus.textContent = `${out}/${candles.length} candles out`;
+
+    if (out === candles.length && !fireworksOnce) {
+      fireworksOnce = true;
+      const r = cakeWrap.getBoundingClientRect();
+      addConfettiBurst(r.left + r.width / 2, r.top + 30, 190);
+      for (let i = 0; i < 7; i++) {
+        setTimeout(
+          () => addFirework(r.left + r.width * rand(0.18, 0.82), r.top + r.height * rand(0.12, 0.55)),
+          i * 180
+        );
+      }
+    }
+  }
+
+  candlesWrap.addEventListener("click", (e) => {
+    const btn = e.target.closest(".candle");
+    if (!btn) return;
+    if (btn.classList.contains("out")) return; // only turn off
+    btn.classList.add("out");
+    const r = btn.getBoundingClientRect();
+    addConfettiBurst(r.left + r.width / 2, r.top + r.height / 2, 45);
+    update();
   });
 
-  art.innerHTML = SITE.bouquet.artSvg;
+  update();
 }
 
 // ---------- Boot ----------
@@ -683,4 +930,4 @@ if (page === "gallery") initGallery();
 if (page === "letter") initLetter();
 if (page === "unlock") initUnlock();
 if (page === "coupons") initCoupons();
-if (page === "bouquet") initBouquet();
+if (page === "cake") initCake();
