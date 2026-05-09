@@ -32,11 +32,6 @@ body{
   margin:0;
   font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Arial;
   color:var(--text);
-  background:
-    radial-gradient(1200px 900px at 20% 10%, rgba(255,90,200,.18), transparent 55%),
-    radial-gradient(900px 700px at 80% 20%, rgba(90,210,255,.16), transparent 50%),
-    radial-gradient(800px 700px at 50% 90%, rgba(255,214,106,.10), transparent 50%),
-    linear-gradient(180deg, var(--bg0), var(--bg1));
   overflow-x:hidden;
 }
 

@@ -23,7 +23,7 @@ function svgDataUri(svg) {
 }
 
 const SITE = {
-//   targetDateIso: "2026-05-31T00:00:00",
+  targetDateIso: "2026-05-31T00:00:00",
   timerFallbackSeconds: 12,
   couponCode: "forever",
   balloons: [
