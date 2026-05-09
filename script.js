@@ -681,36 +681,84 @@ function initCoupons() {
 
   let coupons = [];
 
+  const STORAGE_KEY = "birthday_coupons";
+  const REMOTE_URL = "https://jsonhosting.com/api/json/6f568f49";
+  const EDIT_KEY = "ebe83042b758626aa225589d36d9831c25dee84ee85310ec218319c249ece9ea";
+
+  async function syncToRemote(list) {
+    try {
+      await fetch(REMOTE_URL, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Edit-Key": EDIT_KEY
+        },
+        body: JSON.stringify(list)
+      });
+    } catch {
+      // ignore network errors
+    }
+  }
+
   async function apiGet() {
-    const res = await fetch(API_BASE, { headers: { accept: "application/json" } });
-    if (!res.ok) throw new Error("api_get_failed");
-    const data = await res.json();
-    return Array.isArray(data) ? data : [];
+    try {
+      const res = await fetch(REMOTE_URL);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+          return data;
+        }
+      }
+    } catch {
+      // ignore
+    }
+    let saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {}
+    }
+    const defaultCoupons = [
+      { id: "c1", title: "Long Drive + Music Night", sub: "Good for one big smile!", redeemed: false },
+      { id: "c2", title: "Unlimited Hugs & Kisses Coupon", sub: "Good for one big smile!", redeemed: false },
+      { id: "c3", title: "Midnight Maggi Date", sub: "Good for one big smile!", redeemed: false }
+    ];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultCoupons));
+    return defaultCoupons;
   }
 
   async function apiAdd(title, sub) {
-    const res = await fetch(API_BASE, {
-      method: "POST",
-      headers: { "content-type": "application/json", accept: "application/json" },
-      body: JSON.stringify({ title, sub }),
-    });
-    if (!res.ok) throw new Error("api_add_failed");
-    return await res.json();
+    const list = await apiGet();
+    const item = {
+      id: "c_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8),
+      title,
+      sub: sub || "Good for one big smile!",
+      redeemed: false
+    };
+    list.unshift(item);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    await syncToRemote(list);
+    return item;
   }
 
   async function apiPatch(id, redeemed) {
-    const res = await fetch(`${API_BASE}/${encodeURIComponent(id)}`, {
-      method: "PATCH",
-      headers: { "content-type": "application/json", accept: "application/json" },
-      body: JSON.stringify({ redeemed }),
-    });
-    if (!res.ok) throw new Error("api_patch_failed");
-    return await res.json();
+    const list = await apiGet();
+    const item = list.find(c => c.id === id);
+    if (item) {
+      item.redeemed = redeemed;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+      await syncToRemote(list);
+      return item;
+    }
+    throw new Error("not_found");
   }
 
   async function apiDelete(id) {
-    const res = await fetch(`${API_BASE}/${encodeURIComponent(id)}`, { method: "DELETE" });
-    if (!res.ok) throw new Error("api_delete_failed");
+    const list = await apiGet();
+    const filtered = list.filter(c => c.id !== id);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+    await syncToRemote(filtered);
   }
 
   function render() {
@@ -851,7 +899,7 @@ function initCoupons() {
       setModalOpen(false);
       await refresh();
     } catch {
-      modalMsg.textContent = "Start the server: node server.cjs";
+      modalMsg.textContent = "Error saving coupon.";
     }
   }
 
@@ -863,16 +911,9 @@ function initCoupons() {
     if (e.key === "Enter") submitNewCoupon();
   });
 
-  // If opened as file://, fetch('/api/...') won't work.
-  if (location.protocol === "file:") {
-    list.innerHTML =
-      "<div class='card' style='text-align:center'>Run <b>node server.cjs</b> and open <b>http://localhost:5500/</b> to persist coupons in JSON.</div>";
-    return;
-  }
-
   refresh().catch(() => {
     list.innerHTML =
-      "<div class='card' style='text-align:center'>Start the server with <b>node server.cjs</b> to load/save coupons.json.</div>";
+      "<div class='card' style='text-align:center'>Could not load coupons.</div>";
   });
 }
 
